@@ -7,13 +7,36 @@ import (
 	"testing"
 )
 
+const UserEmail = "user@example.com"
+
 func TestUserRepository_Create(t *testing.T) {
 	s, teardown := store.TestStore(t, databaseUrl)
 	defer teardown("users")
 
 	u, err := s.User().Create(&model.User{
-		Email: "User@example.com",
+		Email: UserEmail,
 	})
+
+	assert.NoError(t, err)
+	assert.NotNil(t, u)
+}
+
+func TestUserRepository_FindByEmail(t *testing.T) {
+	s, teardown := store.TestStore(t, databaseUrl)
+	defer teardown("users")
+
+	email := UserEmail
+
+	_, err := s.User().FindByEmail(email)
+
+	assert.Error(t, err)
+
+	// User exitst
+	s.User().Create(&model.User{
+		Email: UserEmail,
+	})
+
+	u, err := s.User().FindByEmail(email)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, u)
