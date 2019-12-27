@@ -1,73 +1,73 @@
 package apiserver
 
 import (
-  "io"
-	"net/http"
+	"github.com/Backstabe/http-rest-api/internal/app/store"
+	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
-  "github.com/gorilla/mux"
-  "github.com/Backstabe/http-rest-api/internal/app/store"
+	"io"
+	"net/http"
 )
 
-type APIServer struct{
-  config *Config
-  logger *logrus.Logger 
-  router *mux.Router
-  store  *store.Store
+type APIServer struct {
+	config *Config
+	logger *logrus.Logger
+	router *mux.Router
+	store  *store.Store
 }
 
 func New(config *Config) *APIServer {
-  return &APIServer{
-    config: config,
-    logger: logrus.New(),
-    router: mux.NewRouter(),
-  }
+	return &APIServer{
+		config: config,
+		logger: logrus.New(),
+		router: mux.NewRouter(),
+	}
 }
 
 func (s *APIServer) Start() error {
-  if err := s.configureLogger(); err != nil {
-    return err
-  }
+	if err := s.configureLogger(); err != nil {
+		return err
+	}
 
-  s.configureRouter()
+	s.configureRouter()
 
-  if err := s.configureStore(); err != nil {
-    return err
-  }
+	if err := s.configureStore(); err != nil {
+		return err
+	}
 
-  s.logger.Info("starting API server")
+	s.logger.Info("starting API server")
 
-  return http.ListenAndServe(s.config.BindAddr, s.router)
+	return http.ListenAndServe(s.config.BindAddr, s.router)
 }
 
 func (s *APIServer) configureLogger() error {
-  level, err := logrus.ParseLevel(s.config.LogLevel)
-  if err != nil {
-    return err
-  }
+	level, err := logrus.ParseLevel(s.config.LogLevel)
+	if err != nil {
+		return err
+	}
 
-  s.logger.SetLevel(level)
+	s.logger.SetLevel(level)
 
-  return nil
+	return nil
 }
 
 func (s *APIServer) configureRouter() {
-  s.router.HandleFunc("/hello", s.handleHello())
+	s.router.HandleFunc("/hello", s.handleHello())
 }
 
 func (s *APIServer) configureStore() error {
-  st := store.New(s.config.Store)
+	st := store.New(s.config.Store)
 
-  if err := st.Open(); err != nil {
-    return err
-  }
+	if err := st.Open(); err != nil {
+		return err
+	}
 
-  s.store = st
+	s.store = st
 
-  return nil
+	return nil
 }
 
 func (s *APIServer) handleHello() http.HandlerFunc {
-  return func(w http.ResponseWriter, r *http.Request) {
-    io.WriteString(w, "Hello")
-  }
+	return func(w http.ResponseWriter, r *http.Request) {
+		io.WriteString(w, "Hello")
+	}
 }
