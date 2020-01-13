@@ -1,8 +1,9 @@
-package store_test
+package teststore_test
 
 import (
 	"github.com/Backstabe/http-rest-api/internal/app/model"
 	"github.com/Backstabe/http-rest-api/internal/app/store"
+	"github.com/Backstabe/http-rest-api/internal/app/store/teststore"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -10,24 +11,20 @@ import (
 const UserEmail = "user@example.com"
 
 func TestUserRepository_Create(t *testing.T) {
-	s, teardown := store.TestStore(t, databaseUrl)
-	defer teardown("users")
+	s := teststore.New()
+	u := model.TestUser(t)
 
-	u, err := s.User().Create(model.TestUser(t))
-
-	assert.NoError(t, err)
+	assert.NoError(t, s.User().Create(u))
 	assert.NotNil(t, u)
 }
 
 func TestUserRepository_FindByEmail(t *testing.T) {
-	s, teardown := store.TestStore(t, databaseUrl)
-	defer teardown("users")
-
+	s := teststore.New()
 	email := UserEmail
 
 	_, err := s.User().FindByEmail(email)
 
-	assert.Error(t, err)
+	assert.EqualError(t, err, store.ErrRecordNotFound.Error())
 
 	// User exist
 	s.User().Create(model.TestUser(t))

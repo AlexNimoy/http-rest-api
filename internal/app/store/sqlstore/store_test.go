@@ -1,4 +1,4 @@
-package store_test
+package sqlstore_test
 
 import (
 	"os"
@@ -6,13 +6,13 @@ import (
 )
 
 var (
-	databaseUrl string
+	databaseURL string
 )
 
 func TestMain(m *testing.M) {
-	databaseUrl = os.Getenv("TEST_DATABASE_URL")
+	databaseURL = os.Getenv("TEST_DATABASE_URL")
 
-	if databaseUrl == "" {
+	if databaseURL == "" {
 		panic("TEST_DATABASE_URL not exist")
 	}
 

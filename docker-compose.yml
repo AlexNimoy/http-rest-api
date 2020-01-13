@@ -2,7 +2,7 @@ version: "3.4"
 
 services:
   search-engine-db:
-    image: postgres:11.j
+    image: postgres:11.6
     volumes:
       - ./db/data:/var/lib/postgresql/data
     environment:
