@@ -27,6 +27,17 @@ func TestServer_HandleUsersCreate(t *testing.T) {
 			},
 			expectedCode: http.StatusCreated,
 		},
+		{
+			name:         "bad payload",
+			payload:      "payload",
+			expectedCode: http.StatusBadRequest,
+		}, {
+			name: "invalid params",
+			payload: map[string]string{
+				"email": "bad mail",
+			},
+			expectedCode: http.StatusUnprocessableEntity,
+		},
 	}
 
 	for _, tc := range testCases {
