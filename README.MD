@@ -19,7 +19,7 @@ docker-compose up
 https://github.com/golang-migrate/migrate
 
 ```
-migrate -path migrations -database "postgresql://developer:developer@localhost:5453/restapi_test?sslmode=disable" u
+migrate -path migrations -database "postgresql://developer:developer@localhost:5453/restapi_test?sslmode=disable" up
 ```
 
 ## Tests
