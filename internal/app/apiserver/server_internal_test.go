@@ -9,11 +9,12 @@ import (
 	"encoding/json"
 	"github.com/Backstabe/http-rest-api/internal/app/model"
 	"github.com/Backstabe/http-rest-api/internal/app/store/teststore"
+	"github.com/gorilla/sessions"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestServer_HandleUsersCreate(t *testing.T) {
-	s := newServer(teststore.New())
+	s := newServer(teststore.New(), sessions.NewCookieStore([]byte("secret")))
 
 	testCases := []struct {
 		name         string
@@ -59,7 +60,7 @@ func TestServer_HandleSessionsCreate(t *testing.T) {
 	store := teststore.New()
 	store.User().Create(u)
 
-	s := newServer(store)
+	s := newServer(store, sessions.NewCookieStore([]byte("secret")))
 
 	testCases := []struct {
 		name         string
