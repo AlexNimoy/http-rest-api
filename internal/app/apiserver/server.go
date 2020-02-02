@@ -83,9 +83,26 @@ func (s *server) logRequest(next http.Handler) http.Handler {
 		logger.Infof("started %s %s", r.Method, r.RequestURI)
 		start := time.Now()
 
-		next.ServeHTTP(w, r)
+		rw := &responseWriter{w, http.StatusOK}
+		next.ServeHTTP(rw, r)
 
-		logger.Infof("complited in %v", time.Now().Sub(start))
+		var level logrus.Level
+		switch {
+		case rw.code >= 500:
+			level = logrus.ErrorLevel
+		case rw.code >= 400:
+			level = logrus.WarnLevel
+		default:
+			level = logrus.InfoLevel
+		}
+
+		logger.Logf(
+			level,
+			"complited with %d %s in %v",
+			rw.code,
+			http.StatusText(rw.code),
+			time.Now().Sub(start),
+		)
 	})
 }
 
